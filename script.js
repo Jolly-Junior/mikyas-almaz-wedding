@@ -21,7 +21,7 @@ function updateCountdown() {
   const difference = eventDate.getTime() - now.getTime();
 
   if (difference <= 0) {
-    daysElement.textContent = "000";
+    daysElement.textContent = "0";
     hoursElement.textContent = "00";
     minutesElement.textContent = "00";
     secondsElement.textContent = "00";
@@ -34,7 +34,7 @@ function updateCountdown() {
   const minutes = Math.floor((totalSeconds % (60 * 60)) / 60);
   const seconds = totalSeconds % 60;
 
-  daysElement.textContent = pad(days, 3);
+  daysElement.textContent = days;
   hoursElement.textContent = pad(hours);
   minutesElement.textContent = pad(minutes);
   secondsElement.textContent = pad(seconds);
@@ -47,6 +47,33 @@ rsvpForm?.addEventListener("submit", (event) => {
   event.preventDefault();
   window.alert("This RSVP form is a beautiful placeholder for now. We can connect it next.");
 });
+
+// Gallery Autoplay variables
+let galleryAutoplayInterval = null;
+
+function startGalleryAutoplay() {
+  if (galleryAutoplayInterval) return;
+  galleryAutoplayInterval = setInterval(() => {
+    if (!galleryTrack) return;
+    const maxScrollLeft = galleryTrack.scrollWidth - galleryTrack.clientWidth;
+    // If we're at or very close to the end, wrap back to the beginning
+    if (galleryTrack.scrollLeft >= maxScrollLeft - 10) {
+      galleryTrack.scrollTo({
+        left: 0,
+        behavior: "smooth",
+      });
+    } else {
+      scrollGallery(1);
+    }
+  }, 3000);
+}
+
+function stopGalleryAutoplay() {
+  if (galleryAutoplayInterval) {
+    clearInterval(galleryAutoplayInterval);
+    galleryAutoplayInterval = null;
+  }
+}
 
 if (sectionLinks.length && observedSections.length) {
   const sectionObserver = new IntersectionObserver(
@@ -61,6 +88,18 @@ if (sectionLinks.length && observedSections.length) {
         const isActive = link.getAttribute("href") === `#${visibleEntry.target.id}`;
         link.classList.toggle("is-active", isActive);
       });
+
+      // Add 'is-active' class to the current section
+      observedSections.forEach((sec) => {
+        sec.classList.toggle("is-active", sec.id === visibleEntry.target.id);
+      });
+
+      // Auto-slide gallery when in view
+      if (visibleEntry.target.id === "gallery") {
+        startGalleryAutoplay();
+      } else {
+        stopGalleryAutoplay();
+      }
     },
     {
       threshold: [0.2, 0.4, 0.6],
@@ -111,5 +150,43 @@ function scrollGallery(direction) {
 galleryPrevButton?.addEventListener("click", () => scrollGallery(-1));
 galleryNextButton?.addEventListener("click", () => scrollGallery(1));
 galleryTrack?.addEventListener("scroll", updateGalleryDots, { passive: true });
+
+// Pause autoplay on user interaction
+galleryTrack?.addEventListener("mouseenter", stopGalleryAutoplay);
+galleryTrack?.addEventListener("mouseleave", () => {
+  const gallerySection = document.getElementById("gallery");
+  if (gallerySection && gallerySection.classList.contains("is-active")) {
+    startGalleryAutoplay();
+  }
+});
+
 window.addEventListener("load", updateGalleryDots);
 window.addEventListener("resize", updateGalleryDots);
+
+// Scroll Reveal Animations
+const revealElements = document.querySelectorAll(
+  ".section-heading, .glass-card, .timeline-item, .countdown-item, .hero-card, .hero-image-container"
+);
+
+revealElements.forEach((el) => {
+  el.classList.add("reveal");
+});
+
+const revealObserver = new IntersectionObserver(
+  (entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add("visible");
+        revealObserver.unobserve(entry.target);
+      }
+    });
+  },
+  {
+    threshold: 0.1,
+    rootMargin: "0px 0px -50px 0px",
+  }
+);
+
+revealElements.forEach((el) => {
+  revealObserver.observe(el);
+});

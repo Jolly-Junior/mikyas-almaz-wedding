@@ -104,36 +104,42 @@ textarea {
 }
 
 .hero {
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
   padding-top: 20px;
   padding-bottom: 48px;
 }
 
-.hero-media {
+.hero-image-container {
   position: relative;
+  width: 100%;
+  height: clamp(320px, 60vh, 550px);
+  border-radius: var(--radius-xl);
   overflow: hidden;
+  margin-bottom: 32px;
+  box-shadow: var(--shadow);
 }
 
-.hero-media::before {
-  content: "";
+.hero-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 30%;
+}
+
+.hero-image-fade {
   position: absolute;
-  inset: 0;
-  background:
-    linear-gradient(
-      135deg,
-      rgba(10, 12, 17, 0.38),
-      rgba(10, 12, 17, 0.16) 45%,
-      rgba(255, 255, 255, 0)
-    ),
-    url("./assets/images/wedding-10.png") center 30% / cover no-repeat;
-  border-radius: 0 0 40px 40px;
-  box-shadow:
-    inset 0 -50px 110px rgba(255, 255, 255, 0.16),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.08);
-  z-index: -1;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 150px;
+  background: linear-gradient(
+    to bottom,
+    rgba(238, 242, 247, 0) 0%,
+    rgba(238, 242, 247, 0.8) 70%,
+    #eef2f7 100%
+  );
+  pointer-events: none;
 }
 
 .nav,
@@ -218,12 +224,13 @@ textarea {
 .hero-card {
   border-radius: var(--radius-xl);
   padding: 56px;
-  margin-top: auto;
-  max-width: 760px;
+  margin: 0 auto;
+  width: 100%;
+  max-width: 800px;
   background: linear-gradient(
     180deg,
-    rgba(255, 255, 255, 0.5),
-    rgba(255, 255, 255, 0.24)
+    rgba(255, 255, 255, 0.82),
+    rgba(255, 255, 255, 0.52)
   );
 }
 
@@ -234,6 +241,7 @@ textarea {
   letter-spacing: 0.22em;
   text-transform: uppercase;
   font-weight: 700;
+  text-align: center;
 }
 
 h1,
@@ -248,6 +256,7 @@ h1 {
   font-size: clamp(3.2rem, 8vw, 6.2rem);
   line-height: 0.95;
   margin-bottom: 18px;
+  text-align: center;
 }
 
 h2 {
@@ -267,9 +276,11 @@ p {
 }
 
 .hero-copy {
+  margin: 0 auto 18px;
   max-width: 55ch;
   font-size: 1.08rem;
   color: var(--muted);
+  text-align: center;
 }
 
 .hero-meta,
@@ -278,6 +289,7 @@ p {
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 16px;
   margin-top: 28px;
+  text-align: center;
 }
 
 .meta-label {
@@ -291,6 +303,7 @@ p {
   display: flex;
   gap: 14px;
   flex-wrap: wrap;
+  justify-content: center;
   margin-top: 28px;
 }
 
@@ -393,6 +406,19 @@ p {
 .card-footer::before {
   background-image: url("./assets/images/wedding-2.png");
   opacity: 0.38;
+}
+
+/* Scroll Reveal Animations */
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 1s cubic-bezier(0.25, 1, 0.5, 1), transform 1s cubic-bezier(0.25, 1, 0.5, 1);
+  will-change: opacity, transform;
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .countdown-grid {
@@ -621,12 +647,29 @@ blockquote {
 
 @media (max-width: 900px) {
   .hero-meta,
-  .countdown-grid,
   .split-layout,
   .rsvp-card,
   .venue-details,
   .timeline-item {
     grid-template-columns: 1fr;
+  }
+
+  .countdown-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .countdown-item {
+    padding: 18px 10px;
+  }
+
+  .countdown-item span {
+    font-size: 2rem;
+  }
+
+  .countdown-item p {
+    font-size: 0.85rem;
+    margin-top: 4px;
   }
 
   .hero-card {
@@ -671,13 +714,31 @@ blockquote {
     display: none;
   }
 
+  .countdown-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 6px;
+  }
+
+  .countdown-item {
+    padding: 10px 4px;
+    border-radius: var(--radius-md);
+  }
+
+  .countdown-item span {
+    font-size: 1.35rem;
+  }
+
+  .countdown-item p {
+    font-size: 0.7rem;
+    margin-top: 2px;
+  }
+
   .text-card,
   .quote-card,
   .gallery-card,
   .venue-card,
   .rsvp-card,
   .timeline-item,
-  .countdown-item,
   .footer-card {
     padding: 22px;
   }
