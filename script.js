@@ -165,7 +165,7 @@ window.addEventListener("resize", updateGalleryDots);
 
 // Scroll Reveal Animations
 const revealElements = document.querySelectorAll(
-  ".section-heading, .glass-card, .timeline-item, .countdown-item, .hero-card, .hero-image-container"
+  ".section-heading, .glass-card:not(.nav), .timeline-item, .countdown-item, .hero-card, .hero-image-container"
 );
 
 revealElements.forEach((el) => {
