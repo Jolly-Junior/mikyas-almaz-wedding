@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://jolly-junior.github.io/mikyas-almaz-wedding/sitemap.xml

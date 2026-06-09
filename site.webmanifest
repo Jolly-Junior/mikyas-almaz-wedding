@@ -1,0 +1,9 @@
+{
+  "name": "Mikyas & Almaz Wedding Invitation",
+  "short_name": "M&A Wedding",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#eef2f7",
+  "theme_color": "#eef2f7",
+  "icons": []
+}
