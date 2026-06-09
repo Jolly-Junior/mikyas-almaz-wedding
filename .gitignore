@@ -1,0 +1,15 @@
+.DS_Store
+Thumbs.db
+
+# Temporary uploads (not part of final site)
+.uploads/
+
+# Python
+__pycache__/
+*.pyc
+
+# Figma kit zip export (keep the folder, ignore the zip)
+figma-kit.zip
+
+# Logs
+*.log
