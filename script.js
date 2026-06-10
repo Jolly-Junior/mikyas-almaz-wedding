@@ -1,5 +1,10 @@
 const eventDate = new Date("2026-06-25T00:00:00");
 
+// API Configuration
+const API_BASE_URL = process.env.NODE_ENV === 'production' 
+  ? 'https://your-backend-domain.com/api'
+  : 'http://localhost:5000/api';
+
 const daysElement = document.getElementById("days");
 const hoursElement = document.getElementById("hours");
 const minutesElement = document.getElementById("minutes");
@@ -43,9 +48,49 @@ function updateCountdown() {
 updateCountdown();
 setInterval(updateCountdown, 1000);
 
-rsvpForm?.addEventListener("submit", (event) => {
+// ===== RSVP Form Handler =====
+rsvpForm?.addEventListener("submit", async (event) => {
   event.preventDefault();
-  window.alert("This RSVP form is a beautiful placeholder for now. We can connect it next.");
+
+  const formData = new FormData(rsvpForm);
+  const fullName = rsvpForm.querySelector('input[type="text"]').value;
+  const phoneNumber = rsvpForm.querySelector('input[type="tel"]').value;
+  const attendance = rsvpForm.querySelector('select').value;
+  const message = rsvpForm.querySelector('textarea').value;
+
+  // Validate
+  if (!fullName.trim() || !phoneNumber.trim()) {
+    alert("Please fill in all required fields");
+    return;
+  }
+
+  try {
+    const response = await fetch(`${API_BASE_URL}/rsvp`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        fullName,
+        phoneNumber,
+        attendance,
+        message,
+        guestCount: 1
+      })
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+      alert("✅ RSVP submitted successfully! We can't wait to celebrate with you!");
+      rsvpForm.reset();
+    } else {
+      alert("❌ Error: " + (data.message || "Failed to submit RSVP"));
+    }
+  } catch (error) {
+    console.error("RSVP submission error:", error);
+    alert("❌ Connection error. Please check if the backend is running at " + API_BASE_URL);
+  }
 });
 
 // Gallery Autoplay variables
@@ -56,7 +101,6 @@ function startGalleryAutoplay() {
   galleryAutoplayInterval = setInterval(() => {
     if (!galleryTrack) return;
     const maxScrollLeft = galleryTrack.scrollWidth - galleryTrack.clientWidth;
-    // If we're at or very close to the end, wrap back to the beginning
     if (galleryTrack.scrollLeft >= maxScrollLeft - 10) {
       galleryTrack.scrollTo({
         left: 0,
@@ -89,12 +133,10 @@ if (sectionLinks.length && observedSections.length) {
         link.classList.toggle("is-active", isActive);
       });
 
-      // Add 'is-active' class to the current section
       observedSections.forEach((sec) => {
         sec.classList.toggle("is-active", sec.id === visibleEntry.target.id);
       });
 
-      // Auto-slide gallery when in view
       if (visibleEntry.target.id === "gallery") {
         startGalleryAutoplay();
       } else {
@@ -163,7 +205,7 @@ galleryTrack?.addEventListener("mouseleave", () => {
 window.addEventListener("load", updateGalleryDots);
 window.addEventListener("resize", updateGalleryDots);
 
-// Scroll Reveal Animations
+// ===== Scroll Reveal Animations =====
 const revealElements = document.querySelectorAll(
   ".section-heading, .glass-card:not(.nav), .timeline-item, .countdown-item, .hero-card, .hero-image-container"
 );
